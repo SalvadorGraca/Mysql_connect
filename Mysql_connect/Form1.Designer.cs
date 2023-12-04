@@ -107,6 +107,7 @@
             this.button2.TabIndex = 6;
             this.button2.Text = "Login";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // button3
             // 
@@ -116,6 +117,7 @@
             this.button3.TabIndex = 7;
             this.button3.Text = "Novo Registo";
             this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // checkBox1
             // 
@@ -144,7 +146,7 @@
             this.Controls.Add(this.label1);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Form1";
+            this.Text = "login";
             this.ResumeLayout(false);
             this.PerformLayout();
 
