@@ -10,17 +10,17 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
 namespace Mysql_connect
-{
+{   
     public partial class Form1 : Form
     {
-        MySqlConnection connection = new MySqlConnection("server=localhost;port=3306;Username=root;password=");
-        MySqlCommand command;
-        MySqlDataReader mdr;
-        ClassAcedreBD acedreBD = new ClassAcedreBD();
+
+        ClassAcedreBD acederBD = new ClassAcedreBD();
+        DataTable dt = new DataTable();
+        Form2 form2 = new Form2();
         public Form1()
         {
             InitializeComponent();
-            acedreBD.AbrirBD();
+            acederBD.AbrirBD();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -35,94 +35,56 @@ namespace Mysql_connect
 
         private void button2_Click(object sender, EventArgs e)
         {
-
             if (string.IsNullOrEmpty(textBox1.Text) || string.IsNullOrEmpty(textBox2.Text))
             {
                 MessageBox.Show("por favor introduz um username", "Erro");
             }
             else
             {
-                connection.Open();
-                string selectQuery = "SELECT * FROM Clientes.Clientes WHERE Username = '" + textBox1.Text + "'AND password = '" + textBox2.Text + "';";
-                command = new MySqlCommand(selectQuery, connection);
-                mdr = command.ExecuteReader();
-                if (mdr.Read())
+                acederBD.FecharBD();
+                acederBD.AbrirBD();
+                string login = "SELECT * FROM clientes.clientes WHERE Username like '" + textBox1.Text + "' AND password like '" + textBox2.Text + "';";
+                dt = acederBD.ConsultarDados(login);
+                if(dt.Rows.Count == 0)
                 {
-                    string Myconnection2 = "server=localhost;port=3306;Username=root;password=";
-
-                    MySqlConnection MyConn2 = new MySqlConnection(Myconnection2);
-                    try
-                    {
-                        MyConn2.Open();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-                    finally
-                    {
-                        if (MyConn2.State == ConnectionState.Open)
-                        {
-                            MyConn2.Close();
-                        }
-                    }
-                    MessageBox.Show("Login Successful!");
-                    this.Hide();
-                    Form2 frm2 = new Form2();
-                    frm2.ShowDialog();
-
+                    MessageBox.Show("Não existe na nossa base de dados", "ERRO");
                 }
                 else
                 {
-
-                    MessageBox.Show("Incorrect Login Information! Try again.");
+                    this.Hide();
+                    Form2 form2 = new Form2();
+                    form2.ShowDialog();
                 }
-
-                connection.Close();
+                
             }
-
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(textBox1.Text) || string.IsNullOrEmpty(textBox2.Text))
             {
-                MessageBox.Show("Please input Username and Password", "Error");
+                MessageBox.Show("Introduz um Nome e uma password", "Error");
             }
-
             else
             {
-                connection.Open();
-                string selectQuery = "SELECT * FROM Clientes.Clientes WHERE Username = '" + textBox1.Text + "';";
-                command = new MySqlCommand(selectQuery, connection);
-                mdr = command.ExecuteReader();
-                if (mdr.Read())
-                {
-                    MessageBox.Show("Ja esta a ser utilizado");
-
-                }
-                else
-                {
-
-                    string connectionString = "server=127.0.0.1;port=3306;username=root;password=;database=loginform;";
-
-                    MySqlConnection databaseConnection = new MySqlConnection(connectionString);
-                    try
-                    {
-                        databaseConnection.Open();
-                        databaseConnection.Close();
-                    }
-                    catch (Exception ex)
-                    {
-                        // Show any error message.
-                        MessageBox.Show(ex.Message);
-                    }
-
-                    MessageBox.Show("Account Successfully Created!");
-                }
-
-                connection.Close();
+                acederBD.FecharBD();
+                acederBD.AbrirBD();
+                string registar = "INSERT INTO clientes (Username,password) VALUES ('" + textBox1.Text + "','"+textBox2.Text+"');";
+                acederBD.InserirDados(registar);
             }
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if(checkBox1.Checked)
+            {
+                textBox2.UseSystemPasswordChar = false;
+            }
+            else
+            {
+                textBox2.UseSystemPasswordChar = true;
+            }
+           
         }
     }
 }

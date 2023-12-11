@@ -11,7 +11,7 @@ namespace Mysql_connect
 {
     internal class ClassAcedreBD
     {
-        String caminho = "server=localhost;uid=root;pwd='';database=clientes";
+        String caminho = "server=localhost;uid=root;pwd='';database=clientes;";
         MySqlConnection conn;
         MySqlCommand cmd;
         MySqlDataReader reader;
@@ -35,13 +35,27 @@ namespace Mysql_connect
             }
            
         }
+        public void FecharBD()
+        {
+            try
+            {
+                conn.Close();
+            }
+            catch (MySqlException ex)
+            {
+                MessageBox.Show("Erro a fechar da base de dados, " + ex.Message, "Erro");
+                Application.Exit();
+            }
+        }
         public void InserirDados(String sql)
         {
             try
             {
-                cmd = new MySqlCommand(sql, conn);
+                
+                cmd = new MySqlCommand(sql,conn);
                 reader = cmd.ExecuteReader();
                 MessageBox.Show("Dados inseridos com sucesso", "INSERIR");
+
             }
             catch (MySqlException ex)
             {
@@ -82,9 +96,11 @@ namespace Mysql_connect
             DataTable dt = new DataTable();
             try
             {
+
                 cmd = new MySqlCommand(sql, conn);
-                adapter.SelectCommand = cmd;
-                adapter.Fill(dt);
+                reader = cmd.ExecuteReader();
+                dt.Load(reader);
+               
             }
             catch (MySqlException ex)
             {
